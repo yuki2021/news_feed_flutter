@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:news_feed_flutter2/data/category_info.dart';
+import 'package:news_feed_flutter2/data/search_type.dart';
+import 'package:news_feed_flutter2/view/components/category_chips.dart';
 import 'package:news_feed_flutter2/view/components/search_bar.dart';
+import 'package:news_feed_flutter2/viewmodels/news_list_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class NewsListPage extends StatelessWidget {
   const NewsListPage({Key? key}) : super(key: key);
@@ -20,7 +25,10 @@ class NewsListPage extends StatelessWidget {
               SearchBar(
                 onSearch: (keyword) => getKeywordNews(context, keyword),
               ),
-              // CategoryChips(),
+              CategoryChips(
+                onCategorySelected: (category) =>
+                    getCategoryNews(context, category),
+              ),
               Expanded(
                 child: Center(
                   child: CircularProgressIndicator(),
@@ -33,7 +41,29 @@ class NewsListPage extends StatelessWidget {
     );
   }
 
-  onRefresh(BuildContext context) {}
+  onRefresh(BuildContext context) {
+    final viewModel = Provider.of<NewsListViewModel>(context, listen: false);
+    viewModel.getNews(
+      searchType: viewModel.searchType,
+      keyword: viewModel.keyword,
+      category: viewModel.category,
+    );
+  }
 
-  getKeywordNews(BuildContext context, keyword) {}
+  getKeywordNews(BuildContext context, keyword) {
+    final viewModel = Provider.of<NewsListViewModel>(context, listen: false);
+    viewModel.getNews(
+      searchType: SearchType.KEYWORD,
+      keyword: keyword,
+      category: categories[0],
+    );
+  }
+
+  getCategoryNews(BuildContext context, Category category) {
+    final viewModel = Provider.of<NewsListViewModel>(context, listen: false);
+    viewModel.getNews(
+      searchType: SearchType.CATEGORY,
+      category: category,
+    );
+  }
 }
